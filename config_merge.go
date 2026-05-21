@@ -23,7 +23,7 @@ type MergedConfigProvider struct {
 	local         ProbeConfigProvider
 	runtime       *RuntimeConfig
 	configVersion string
-	// ragFieldAllowlist : si non-nil, SetRemote valide fields.*.rag contre le schéma (usable_in_rag).
+	// ragFieldAllowlist: when set, SetRemote validates fields.*.rag against the schema (usable_in_rag).
 	ragFieldAllowlist RAGFieldSet
 }
 
@@ -33,8 +33,8 @@ func NewMergedConfigProvider(local ProbeConfigProvider) *MergedConfigProvider {
 	return &MergedConfigProvider{local: local}
 }
 
-// SetRAGFieldAllowlist fixe la liste des champs autorisés pour fields.<champ>.rag (issue du schema.yml).
-// Appeler avant SetRemote / FetchAndMergeConfig si le controlplane peut pousser une config runtime.
+// SetRAGFieldAllowlist sets allowed fields for fields.<name>.rag (from schema.yml).
+// Call before SetRemote / FetchAndMergeConfig when the control plane may push runtime config.
 func (m *MergedConfigProvider) SetRAGFieldAllowlist(allowed RAGFieldSet) {
 	m.mu.Lock()
 	defer m.mu.Unlock()

@@ -31,7 +31,7 @@ type DataConfig struct {
 	Entities []EntityConfig `yaml:"entities"`
 }
 
-// EntityFieldConfig options par champ d’entité (ex. rag sur body pour Confluence).
+// EntityFieldConfig holds per-schema-field options (e.g. rag on body for Confluence).
 type EntityFieldConfig struct {
 	RAG bool `yaml:"rag,omitempty" json:"rag,omitempty"`
 }
@@ -40,12 +40,12 @@ type EntityFieldConfig struct {
 type EntityConfig struct {
 	Name            string `yaml:"name" json:"name"`
 	RefreshInterval string `yaml:"refresh_interval" json:"refresh_interval"` // Required: refresh interval for this entity
-	// Fields configure des options par nom de champ schéma (ex. fields.body.rag: true).
+	// Fields sets options per schema field name (e.g. fields.body.rag: true).
 	Fields    map[string]EntityFieldConfig `yaml:"fields,omitempty" json:"fields,omitempty"`
 	Retention *RetentionConfig             `yaml:"retention_frequencies,omitempty" json:"retention_frequencies,omitempty"` // Optional, per-entity retention configuration
 }
 
-// FieldRAG indique si le champ fieldName a rag activé pour cette entité.
+// FieldRAG reports whether RAG is enabled for fieldName on this entity.
 func (e *EntityConfig) FieldRAG(fieldName string) bool {
 	if e == nil || e.Fields == nil {
 		return false

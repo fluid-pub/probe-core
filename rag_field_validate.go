@@ -6,11 +6,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// RAGFieldSet liste, pour chaque type d’entité (ex. pages), les noms de champs du schéma
-// marqués usable_in_rag. Seuls ces champs peuvent avoir fields.<nom>.rag: true dans la config probe.
+// RAGFieldSet maps each entity type (e.g. pages) to schema field names marked usable_in_rag.
+// Only those fields may have fields.<name>.rag: true in the probe config.
 type RAGFieldSet map[string]map[string]struct{}
 
-// schemaYAMLRoot structure minimale pour schema.yml (entities.*.fields.*.usable_in_rag).
+// schemaYAMLRoot is the minimal schema.yml shape (entities.*.fields.*.usable_in_rag).
 type schemaYAMLRoot struct {
 	Entities map[string]schemaYAMLEntity `yaml:"entities"`
 }
@@ -23,7 +23,7 @@ type schemaYAMLField struct {
 	UsableInRAG bool `yaml:"usable_in_rag"`
 }
 
-// ParseRAGFieldSetFromSchemaYAML extrait les champs raggable depuis un schema.yml.
+// ParseRAGFieldSetFromSchemaYAML extracts RAG-eligible fields from a schema.yml file.
 func ParseRAGFieldSetFromSchemaYAML(data []byte) (RAGFieldSet, error) {
 	var root schemaYAMLRoot
 	if err := yaml.Unmarshal(data, &root); err != nil {
@@ -43,8 +43,8 @@ func ParseRAGFieldSetFromSchemaYAML(data []byte) (RAGFieldSet, error) {
 	return out, nil
 }
 
-// ValidateRAGEntityFields vérifie que tout fields.<nom>.rag: true correspond à un champ usable_in_rag
-// dans le schéma pour cette entité. Si allowed est nil, la validation est ignorée.
+// ValidateRAGEntityFields ensures every fields.<name>.rag: true matches a usable_in_rag field
+// in the schema for that entity. If allowed is nil, validation is skipped.
 func ValidateRAGEntityFields(entities []EntityConfig, allowed RAGFieldSet) error {
 	if allowed == nil {
 		return nil
