@@ -2,8 +2,8 @@ package controlplane
 
 // PingStatus is the status returned by the controlplane in response to a ping.
 const (
-	PingStatusPong                  = "pong"
-	PingStatusConfigurationChanged  = "configuration_changed"
+	PingStatusPong                 = "pong"
+	PingStatusConfigurationChanged = "configuration_changed"
 )
 
 // Client defines the interface for controlplane communication

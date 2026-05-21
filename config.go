@@ -76,10 +76,10 @@ type ControlplaneConfig struct {
 	WebSocketURL      string                  `yaml:"websocket_url"`
 	APIVersion        string                  `yaml:"api_version,omitempty"`
 	Parameters        *ControlplaneParameters `yaml:"parameters"`
-	QueueSize         int     `yaml:"queue_size,omitempty"`         // Default: 100
-	MaxRetries        int     `yaml:"max_retries,omitempty"`        // Default: 3
-	RetryBackoff      string  `yaml:"retry_backoff,omitempty"`      // Default: "1s"
-	HeartbeatInterval string  `yaml:"heartbeat_interval,omitempty"` // Default: "30s"
+	QueueSize         int                     `yaml:"queue_size,omitempty"`         // Default: 100
+	MaxRetries        int                     `yaml:"max_retries,omitempty"`        // Default: 3
+	RetryBackoff      string                  `yaml:"retry_backoff,omitempty"`      // Default: "1s"
+	HeartbeatInterval string                  `yaml:"heartbeat_interval,omitempty"` // Default: "30s"
 }
 
 // ControlplaneConnectionRequested reports whether the resolved configuration
