@@ -34,19 +34,19 @@ type ConfigChangedCallback func(runtimeConfigJSON []byte, configVersion string)
 
 // PushManager manages asynchronous state pushing to the controlplane
 type PushManager struct {
-	queue          chan StateUpdate
-	client         Client
-	config         PushConfig
-	stopChan       chan struct{}
-	reconnectChan  chan struct{}
-	wg             sync.WaitGroup
-	mu             sync.RWMutex
-	connected      bool
-	lastError      error
-	probeName      string
-	probeVersion   string
+	queue            chan StateUpdate
+	client           Client
+	config           PushConfig
+	stopChan         chan struct{}
+	reconnectChan    chan struct{}
+	wg               sync.WaitGroup
+	mu               sync.RWMutex
+	connected        bool
+	lastError        error
+	probeName        string
+	probeVersion     string
 	getConfigVersion ConfigVersionFunc
-	onConfigChanged ConfigChangedCallback
+	onConfigChanged  ConfigChangedCallback
 }
 
 // NewPushManager creates a new push manager

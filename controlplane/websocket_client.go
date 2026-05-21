@@ -34,23 +34,23 @@ type Reply struct {
 }
 
 type WebSocketClient struct {
-	websocketURL    string
-	configURL       string // HTTP URL for GET config (derived from websocket URL)
-	conn            *websocket.Conn
-	connMu          sync.RWMutex
-	writeMu         sync.Mutex
-	connected       bool
-	joined          bool
-	refCounter      int64
-	refMu           sync.Mutex
-	stopChan        chan struct{}
-	wg              sync.WaitGroup
-	probeName       string
-	probeVersion    string
+	websocketURL     string
+	configURL        string // HTTP URL for GET config (derived from websocket URL)
+	conn             *websocket.Conn
+	connMu           sync.RWMutex
+	writeMu          sync.Mutex
+	connected        bool
+	joined           bool
+	refCounter       int64
+	refMu            sync.Mutex
+	stopChan         chan struct{}
+	wg               sync.WaitGroup
+	probeName        string
+	probeVersion     string
 	organizationUUID string
-	token           string
-	replyChans      map[string]chan Reply
-	replyMu         sync.RWMutex
+	token            string
+	replyChans       map[string]chan Reply
+	replyMu          sync.RWMutex
 }
 
 func NewWebSocketClient(websocketURL, organizationUUID, token, probeName, probeVersion string) (*WebSocketClient, error) {
@@ -88,8 +88,8 @@ func NewWebSocketClient(websocketURL, organizationUUID, token, probeName, probeV
 	return &WebSocketClient{
 		websocketURL:     completeURL,
 		configURL:        configURL,
-		connected:         false,
-		joined:            false,
+		connected:        false,
+		joined:           false,
 		stopChan:         make(chan struct{}),
 		probeName:        probeName,
 		probeVersion:     probeVersion,
