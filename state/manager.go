@@ -15,6 +15,23 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// resolveSchemaPath locates schema.yml for PushSchema (image path, config sibling, or dev layout).
+func resolveSchemaPath(stateDir string) string {
+	candidates := []string{"/etc/fluid/config/schema.yml"}
+	if stateDir != "" {
+		candidates = append([]string{
+			filepath.Join(filepath.Dir(stateDir), "config", "schema.yml"),
+		}, candidates...)
+	}
+	candidates = append(candidates, "config/schema.yml")
+	for _, p := range candidates {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return ""
+}
+
 // Manager handles state persistence and cleanup
 type Manager struct {
 	config      ConfigProvider
@@ -38,14 +55,7 @@ func NewManager(cfg ConfigProvider) (*Manager, error) {
 		log.Printf("Controlplane configuration found, initializing WebSocket connection...")
 		// Try to find schema.yml in the same directory as the state directory
 		// (assuming config is typically in a sibling directory)
-		stateDir := cfg.GetStateDir()
-		var schemaPath string
-		if stateDir != "" {
-			// Try to find schema.yml relative to state directory
-			// Common structure: probe/config/schema.yml and probe/state/
-			configDir := filepath.Join(filepath.Dir(stateDir), "config")
-			schemaPath = filepath.Join(configDir, "schema.yml")
-		}
+		schemaPath := resolveSchemaPath(cfg.GetStateDir())
 		cpConfig := cfg.GetControlplane()
 		client, err := controlplane.NewClientFromConfig(cpConfig, cfg.GetProbeName(), cfg.GetProbeVersion(), schemaPath)
 		if err != nil {
