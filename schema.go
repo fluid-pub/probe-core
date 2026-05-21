@@ -21,13 +21,13 @@ type EntitySchema struct {
 
 // FieldSchema represents the schema for a single field
 type FieldSchema struct {
-	Type         string `yaml:"type"`
-	Description  string `yaml:"description"`
-	Format       string `yaml:"format,omitempty"`
-	Primary      bool   `yaml:"primary,omitempty"`
-	Nullable     bool   `yaml:"nullable,omitempty"`
-	UsableInRAG  bool   `yaml:"usable_in_rag,omitempty"`
-	Frequency    string `yaml:"frequency,omitempty"` // For cost type fields: frequency of the cost (default: "monthly")
+	Type        string `yaml:"type"`
+	Description string `yaml:"description"`
+	Format      string `yaml:"format,omitempty"`
+	Primary     bool   `yaml:"primary,omitempty"`
+	Nullable    bool   `yaml:"nullable,omitempty"`
+	UsableInRAG bool   `yaml:"usable_in_rag,omitempty"`
+	Frequency   string `yaml:"frequency,omitempty"` // For cost type fields: frequency of the cost (default: "monthly")
 }
 
 // LoadSchema loads the schema from a YAML file
