@@ -52,7 +52,7 @@ func NewManager(cfg ConfigProvider) (*Manager, error) {
 
 	// Initialize controlplane client when a full connection is configured
 	if core.ControlplaneConnectionRequested(cfg.GetControlplane()) {
-		log.Printf("Controlplane configuration found, initializing WebSocket connection...")
+		log.Printf("Controlplane configuration found, initializing HTTP connection...")
 		// Try to find schema.yml in the same directory as the state directory
 		// (assuming config is typically in a sibling directory)
 		schemaPath := resolveSchemaPath(cfg.GetStateDir())
