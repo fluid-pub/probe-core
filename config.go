@@ -73,10 +73,8 @@ type ControlplaneParameters struct {
 
 // ControlplaneConfig contains controlplane connection configuration
 type ControlplaneConfig struct {
-	// BaseURL is the HTTP API root (e.g. https://controlplane.example.com). Preferred for probes.
-	BaseURL string `yaml:"base_url,omitempty"`
-	// WebSocketURL is legacy; when BaseURL is empty the HTTP base is derived from this URL.
-	WebSocketURL      string                  `yaml:"websocket_url,omitempty"`
+	// BaseURL is the HTTP API root (e.g. https://controlplane.example.com).
+	BaseURL           string                  `yaml:"base_url"`
 	APIVersion        string                  `yaml:"api_version,omitempty"`
 	Parameters        *ControlplaneParameters `yaml:"parameters"`
 	QueueSize         int                     `yaml:"queue_size,omitempty"`         // Default: 100
@@ -86,14 +84,13 @@ type ControlplaneConfig struct {
 }
 
 // ControlplaneConnectionRequested reports whether the configuration requests a
-// control plane connection (HTTP base or legacy websocket URL + organization + token).
+// control plane HTTP connection (base_url + organization + token).
 // When true, startup must fail if that connection cannot be established.
 func ControlplaneConnectionRequested(cp *ControlplaneConfig) bool {
 	if cp == nil || cp.Parameters == nil {
 		return false
 	}
-	hasURL := strings.TrimSpace(cp.BaseURL) != "" || strings.TrimSpace(cp.WebSocketURL) != ""
-	return hasURL &&
+	return strings.TrimSpace(cp.BaseURL) != "" &&
 		strings.TrimSpace(cp.Parameters.OrganizationUUID) != "" &&
 		strings.TrimSpace(cp.Parameters.Token) != ""
 }

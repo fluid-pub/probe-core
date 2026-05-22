@@ -1,5 +1,7 @@
 # Fluid Agents Core
 
+Release notes: [CHANGELOG.md](CHANGELOG.md).
+
 Core framework for building Fluid agents. Provides common functionality for probe lifecycle management, entity handling, state persistence, and automatic cleanup.
 
 ## Overview
