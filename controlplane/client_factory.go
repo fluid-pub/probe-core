@@ -30,7 +30,7 @@ func NewClientFromConfig(cfg *core.ControlplaneConfig, probeName, probeVersion s
 		return nil, fmt.Errorf("token is required")
 	}
 
-	baseURL, err := ResolvedBaseURL(cfg.BaseURL, cfg.WebSocketURL)
+	baseURL, err := ParseBaseURL(cfg.BaseURL)
 	if err != nil {
 		return nil, err
 	}

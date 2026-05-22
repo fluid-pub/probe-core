@@ -42,7 +42,7 @@ type Manager struct {
 }
 
 // NewManager creates a new state manager. If the configuration requests a control
-// plane connection (websocket URL + org + token), that connection must succeed
+// plane connection (HTTP base_url + org + token), that connection must succeed
 // or this function returns a non-nil error.
 func NewManager(cfg ConfigProvider) (*Manager, error) {
 	m := &Manager{

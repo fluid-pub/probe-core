@@ -27,7 +27,7 @@ type HTTPClient struct {
 
 // NewHTTPClient creates a probe HTTP transport client.
 func NewHTTPClient(baseURL, organizationUUID, token, probeName, probeVersion string) (*HTTPClient, error) {
-	resolved, err := ResolvedBaseURL(baseURL, "")
+	resolved, err := ParseBaseURL(baseURL)
 	if err != nil {
 		return nil, err
 	}

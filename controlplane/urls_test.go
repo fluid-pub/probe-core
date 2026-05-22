@@ -2,27 +2,28 @@ package controlplane
 
 import "testing"
 
-func TestBaseURLFromWebSocketURL(t *testing.T) {
+func TestParseBaseURL(t *testing.T) {
 	tests := []struct {
 		in   string
 		want string
 	}{
-		{
-			"ws://fluid-controlplane.fluid.svc.cluster.local:4000/v1/probes/websocket",
-			"http://fluid-controlplane.fluid.svc.cluster.local:4000",
-		},
-		{
-			"wss://dev.fluid.pub/v1/probes/websocket",
-			"https://dev.fluid.pub",
-		},
+		{"http://fluid-controlplane.fluid.svc.cluster.local:4000", "http://fluid-controlplane.fluid.svc.cluster.local:4000"},
+		{"https://dev.fluid.pub/", "https://dev.fluid.pub"},
 	}
 	for _, tc := range tests {
-		got, err := BaseURLFromWebSocketURL(tc.in)
+		got, err := ParseBaseURL(tc.in)
 		if err != nil {
-			t.Fatalf("BaseURLFromWebSocketURL(%q): %v", tc.in, err)
+			t.Fatalf("ParseBaseURL(%q): %v", tc.in, err)
 		}
 		if got != tc.want {
-			t.Fatalf("BaseURLFromWebSocketURL(%q) = %q, want %q", tc.in, got, tc.want)
+			t.Fatalf("ParseBaseURL(%q) = %q, want %q", tc.in, got, tc.want)
 		}
+	}
+}
+
+func TestParseBaseURL_rejectsWebSocketScheme(t *testing.T) {
+	_, err := ParseBaseURL("wss://dev.fluid.pub/v1/probes/websocket")
+	if err == nil {
+		t.Fatal("expected error for ws/wss scheme")
 	}
 }

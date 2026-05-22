@@ -12,14 +12,17 @@ Downstream probes (submodule or tagged module) should note **`probe-core`** upgr
 ### Added
 
 - **`controlplane.HTTPClient`**: HTTP transport for **`/probes/register`**, **`/probes/ping`**, **`/probes/v1/ingest`**, **`GET /probes/config`**, **`POST /probes/v1/schema`**.
-- **`ResolvedBaseURL`** / **`BaseURLFromWebSocketURL`** to migrate legacy `websocket_url` settings without operator secret changes.
 
 ### Changed
 
-- **`NewClientFromConfig`** uses HTTP by default (WebSocket client remains in the tree but is no longer selected by the factory).
+- **`NewClientFromConfig`** requires **`controlplane.base_url`** (http/https only).
+
+### Removed
+
+- WebSocket control plane client and **`websocket_url`** configuration; **`github.com/gorilla/websocket`** dependency.
 
 ## [0.1.0] - 2026-05-21
 
 ### Added
 
-- Initial published shared library: probe lifecycle, state manager, WebSocket control plane client, schema load/push, and runtime config merge helpers.
+- Initial published shared library: probe lifecycle, state manager, control plane client, schema load/push, and runtime config merge helpers.
