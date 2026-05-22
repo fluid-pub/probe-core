@@ -18,10 +18,6 @@ func NewClientFromConfig(cfg *core.ControlplaneConfig, probeName, probeVersion s
 		return nil, fmt.Errorf("controlplane configuration is nil")
 	}
 
-	if cfg.WebSocketURL == "" {
-		return nil, fmt.Errorf("websocket URL is required")
-	}
-
 	if cfg.Parameters == nil {
 		return nil, fmt.Errorf("controlplane parameters are required")
 	}
@@ -34,57 +30,49 @@ func NewClientFromConfig(cfg *core.ControlplaneConfig, probeName, probeVersion s
 		return nil, fmt.Errorf("token is required")
 	}
 
-	client, err := NewWebSocketClient(
-		cfg.WebSocketURL,
+	baseURL, err := ResolvedBaseURL(cfg.BaseURL, cfg.WebSocketURL)
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := NewHTTPClient(
+		baseURL,
 		cfg.Parameters.OrganizationUUID,
 		cfg.Parameters.Token,
 		probeName,
 		probeVersion,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create WebSocket client: %w", err)
+		return nil, fmt.Errorf("failed to create HTTP client: %w", err)
 	}
 
-	if err := client.Connect(); err != nil {
-		return nil, fmt.Errorf("failed to connect: %w", err)
+	if err := client.Register(probeName, probeVersion); err != nil {
+		return nil, fmt.Errorf("failed to register: %w", err)
 	}
 
-	if err := client.Join(); err != nil {
-		return nil, fmt.Errorf("failed to join channel: %w", err)
-	}
+	pushSchema(client, schemaPath, probeName, probeVersion)
 
-	// Load and push schema if available
+	log.Printf("Successfully connected to controlplane at %s (HTTP)", baseURL)
+
+	return client, nil
+}
+
+func pushSchema(client Client, schemaPath []string, probeName, probeVersion string) {
 	if len(schemaPath) > 0 && schemaPath[0] != "" {
 		schema, err := core.LoadSchema(schemaPath[0])
 		if err != nil {
 			log.Printf("Warning: failed to load schema from %s: %v", schemaPath[0], err)
-		} else {
-			if err := client.PushSchema(schema.ToMap()); err != nil {
-				log.Printf("Warning: failed to push schema: %v", err)
-			} else {
-				log.Printf("Successfully pushed schema to controlplane")
-			}
+		} else if err := client.PushSchema(schema.ToMap()); err != nil {
+			log.Printf("Warning: failed to push schema: %v", err)
 		}
-	} else {
-		// Try to find schema.yml in config directory
-		schema, err := core.LoadSchema()
-		if err != nil {
-			log.Printf("Warning: schema file not found, skipping schema push: %v", err)
-		} else {
-			if err := client.PushSchema(schema.ToMap()); err != nil {
-				log.Printf("Warning: failed to push schema: %v", err)
-			} else {
-				log.Printf("Successfully pushed schema to controlplane")
-			}
-		}
+		return
 	}
-
-	client.StartPingLoop()
-	client.StartReconnectLoop()
-
-	log.Printf("Successfully connected to controlplane")
-
-	return client, nil
+	schema, err := core.LoadSchema()
+	if err != nil {
+		log.Printf("Warning: schema file not found, skipping schema push: %v", err)
+	} else if err := client.PushSchema(schema.ToMap()); err != nil {
+		log.Printf("Warning: failed to push schema: %v", err)
+	}
 }
 
 // FetchAndMergeConfig fetches runtime config from the controlplane and merges it

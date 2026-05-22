@@ -73,7 +73,10 @@ type ControlplaneParameters struct {
 
 // ControlplaneConfig contains controlplane connection configuration
 type ControlplaneConfig struct {
-	WebSocketURL      string                  `yaml:"websocket_url"`
+	// BaseURL is the HTTP API root (e.g. https://controlplane.example.com). Preferred for probes.
+	BaseURL string `yaml:"base_url,omitempty"`
+	// WebSocketURL is legacy; when BaseURL is empty the HTTP base is derived from this URL.
+	WebSocketURL      string                  `yaml:"websocket_url,omitempty"`
 	APIVersion        string                  `yaml:"api_version,omitempty"`
 	Parameters        *ControlplaneParameters `yaml:"parameters"`
 	QueueSize         int                     `yaml:"queue_size,omitempty"`         // Default: 100
@@ -82,17 +85,16 @@ type ControlplaneConfig struct {
 	HeartbeatInterval string                  `yaml:"heartbeat_interval,omitempty"` // Default: "30s"
 }
 
-// ControlplaneConnectionRequested reports whether the resolved configuration
-// requests a WebSocket connection to the control plane (URL + organization + token).
+// ControlplaneConnectionRequested reports whether the configuration requests a
+// control plane connection (HTTP base or legacy websocket URL + organization + token).
 // When true, startup must fail if that connection cannot be established.
 func ControlplaneConnectionRequested(cp *ControlplaneConfig) bool {
-	if cp == nil {
+	if cp == nil || cp.Parameters == nil {
 		return false
 	}
-	if strings.TrimSpace(cp.WebSocketURL) == "" || cp.Parameters == nil {
-		return false
-	}
-	return strings.TrimSpace(cp.Parameters.OrganizationUUID) != "" &&
+	hasURL := strings.TrimSpace(cp.BaseURL) != "" || strings.TrimSpace(cp.WebSocketURL) != ""
+	return hasURL &&
+		strings.TrimSpace(cp.Parameters.OrganizationUUID) != "" &&
 		strings.TrimSpace(cp.Parameters.Token) != ""
 }
 
