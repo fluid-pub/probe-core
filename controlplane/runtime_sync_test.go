@@ -8,13 +8,13 @@ import (
 )
 
 type fakeConfigClient struct {
-	mu            sync.Mutex
-	registered    bool
-	pingStatus    string
-	fetchBody     []byte
-	fetchVersion  string
-	pingVersions  []string
-	fetchCount    int
+	mu           sync.Mutex
+	registered   bool
+	pingStatus   string
+	fetchBody    []byte
+	fetchVersion string
+	pingVersions []string
+	fetchCount   int
 }
 
 func (f *fakeConfigClient) Register(_, _ string) error {
