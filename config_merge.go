@@ -145,26 +145,10 @@ func ParseRuntimeConfig(data []byte) (runtime *RuntimeConfig, configVersion stri
 	}
 	configVersion = raw.ConfigVersion
 	if raw.RuntimeConfig != nil {
-		runtime := raw.RuntimeConfig
-		if runtime.Collection == nil && runtime.Data != nil && len(runtime.Data.Entities) > 0 {
-			overlay := &HostCollectionOverlay{}
-			ApplyEntityIntervalsToCollection(overlay, runtime.Data.Entities)
-			if overlay.SystemInterval != "" || overlay.FilesInterval != "" || overlay.APTInterval != "" ||
-				overlay.InstalledPackagesInterval != "" || overlay.ServicesInterval != "" {
-				runtime.Collection = overlay
-			}
-		}
-		return runtime, configVersion, nil
+		return raw.RuntimeConfig, configVersion, nil
 	}
 	if raw.Data != nil {
-		runtime := &RuntimeConfig{Data: raw.Data}
-		overlay := &HostCollectionOverlay{}
-		ApplyEntityIntervalsToCollection(overlay, raw.Data.Entities)
-		if overlay.SystemInterval != "" || overlay.FilesInterval != "" || overlay.APTInterval != "" ||
-			overlay.InstalledPackagesInterval != "" || overlay.ServicesInterval != "" {
-			runtime.Collection = overlay
-		}
-		return runtime, configVersion, nil
+		return &RuntimeConfig{Data: raw.Data}, configVersion, nil
 	}
 	return nil, configVersion, nil
 }

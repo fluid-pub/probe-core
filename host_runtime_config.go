@@ -2,17 +2,8 @@ package core
 
 import "time"
 
-// Host collection entity names used by host-native probes (e.g. Debian) for interval mapping.
-const (
-	EntityDebianSystemMetrics      = "debian_system_metrics"
-	EntityDebianFilesystem         = "debian_filesystem"
-	EntityDebianFileChecks         = "debian_file_checks"
-	EntityDebianPackageUpdates     = "debian_package_updates"
-	EntityDebianInstalledPackages  = "debian_installed_packages"
-	EntityDebianSystemdServices    = "debian_systemd_services"
-)
-
 // HostCollectionOverlay is optional collection tuning from control plane runtime_config.
+// Integrations (e.g. host-native probes) define field semantics; core only merges non-empty values.
 type HostCollectionOverlay struct {
 	SystemInterval            string `json:"system_interval,omitempty"`
 	FilesInterval             string `json:"files_interval,omitempty"`
@@ -33,41 +24,6 @@ type HostFileRule struct {
 type HostDirectoryRule struct {
 	Path      string `json:"path"`
 	Recursive bool   `json:"recursive"`
-}
-
-// ApplyEntityIntervalsToCollection maps data.entities refresh_interval values onto
-// collection interval fields when the runtime payload does not set them explicitly.
-func ApplyEntityIntervalsToCollection(overlay *HostCollectionOverlay, entities []EntityConfig) {
-	if overlay == nil {
-		return
-	}
-	for _, e := range entities {
-		if e.Name == "" || e.RefreshInterval == "" {
-			continue
-		}
-		switch e.Name {
-		case EntityDebianSystemMetrics, EntityDebianFilesystem:
-			if overlay.SystemInterval == "" {
-				overlay.SystemInterval = e.RefreshInterval
-			}
-		case EntityDebianFileChecks:
-			if overlay.FilesInterval == "" {
-				overlay.FilesInterval = e.RefreshInterval
-			}
-		case EntityDebianPackageUpdates:
-			if overlay.APTInterval == "" {
-				overlay.APTInterval = e.RefreshInterval
-			}
-		case EntityDebianInstalledPackages:
-			if overlay.InstalledPackagesInterval == "" {
-				overlay.InstalledPackagesInterval = e.RefreshInterval
-			}
-		case EntityDebianSystemdServices:
-			if overlay.ServicesInterval == "" {
-				overlay.ServicesInterval = e.RefreshInterval
-			}
-		}
-	}
 }
 
 // MergeHostCollectionOverlay applies non-empty remote fields onto local duration strings and limits.
