@@ -9,6 +9,12 @@ Downstream probes (submodule or tagged module) should note **`probe-core`** upgr
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-06-04
+
+### Fixed
+
+- gofmt on `controlplane/runtime_sync_test.go` (CI formatting check).
+
 ## [0.2.0] - 2026-06-04
 
 ### Added
