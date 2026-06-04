@@ -9,6 +9,8 @@ Downstream probes (submodule or tagged module) should note **`probe-core`** upgr
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-04
+
 ### Added
 
 - **`enroll`**: HTTP client for **`POST /api/v1/enrollment/enroll`** (mirror of `fluid/agents/core/enroll`; keep both packages aligned when changing enrollment behavior).
