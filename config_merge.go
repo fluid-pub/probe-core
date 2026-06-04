@@ -13,10 +13,6 @@ type RuntimeConfig struct {
 	Data *struct {
 		Entities []EntityConfig `json:"entities"`
 	} `json:"data,omitempty"`
-	// Host-native probes (e.g. Debian): optional collection, file, and directory overrides.
-	Collection  *HostCollectionOverlay `json:"collection,omitempty"`
-	Files       []HostFileRule         `json:"files,omitempty"`
-	Directories []HostDirectoryRule    `json:"directories,omitempty"`
 }
 
 // MergedConfigProvider implements ProbeConfigProvider by merging local config
