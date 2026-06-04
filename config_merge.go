@@ -13,6 +13,10 @@ type RuntimeConfig struct {
 	Data *struct {
 		Entities []EntityConfig `json:"entities"`
 	} `json:"data,omitempty"`
+	// Host-native probes (e.g. Debian): optional collection, file, and directory overrides.
+	Collection  *HostCollectionOverlay `json:"collection,omitempty"`
+	Files       []HostFileRule         `json:"files,omitempty"`
+	Directories []HostDirectoryRule    `json:"directories,omitempty"`
 }
 
 // MergedConfigProvider implements ProbeConfigProvider by merging local config
@@ -141,10 +145,26 @@ func ParseRuntimeConfig(data []byte) (runtime *RuntimeConfig, configVersion stri
 	}
 	configVersion = raw.ConfigVersion
 	if raw.RuntimeConfig != nil {
-		return raw.RuntimeConfig, configVersion, nil
+		runtime := raw.RuntimeConfig
+		if runtime.Collection == nil && runtime.Data != nil && len(runtime.Data.Entities) > 0 {
+			overlay := &HostCollectionOverlay{}
+			ApplyEntityIntervalsToCollection(overlay, runtime.Data.Entities)
+			if overlay.SystemInterval != "" || overlay.FilesInterval != "" || overlay.APTInterval != "" ||
+				overlay.InstalledPackagesInterval != "" || overlay.ServicesInterval != "" {
+				runtime.Collection = overlay
+			}
+		}
+		return runtime, configVersion, nil
 	}
 	if raw.Data != nil {
-		return &RuntimeConfig{Data: raw.Data}, configVersion, nil
+		runtime := &RuntimeConfig{Data: raw.Data}
+		overlay := &HostCollectionOverlay{}
+		ApplyEntityIntervalsToCollection(overlay, raw.Data.Entities)
+		if overlay.SystemInterval != "" || overlay.FilesInterval != "" || overlay.APTInterval != "" ||
+			overlay.InstalledPackagesInterval != "" || overlay.ServicesInterval != "" {
+			runtime.Collection = overlay
+		}
+		return runtime, configVersion, nil
 	}
 	return nil, configVersion, nil
 }

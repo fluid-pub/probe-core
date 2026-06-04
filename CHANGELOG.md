@@ -13,6 +13,8 @@ Downstream probes (submodule or tagged module) should note **`probe-core`** upgr
 
 - **`enroll`**: HTTP client for **`POST /api/v1/enrollment/enroll`** (mirror of `fluid/agents/core/enroll`; keep both packages aligned when changing enrollment behavior).
 - **`controlplane.HTTPClient`**: HTTP transport for **`/probes/register`**, **`/probes/ping`**, **`/probes/v1/ingest`**, **`GET /probes/config`**, **`POST /probes/v1/schema`**.
+- **`controlplane.RuntimeSync`**: fetch runtime config at startup and reload on ping **`configuration_changed`**.
+- **Host runtime overlay**: `HostCollectionOverlay`, file/directory rules on `RuntimeConfig`; `ApplyEntityIntervalsToCollection` maps `data.entities` refresh intervals (Debian entity names) onto collection fields.
 
 ### Changed
 
